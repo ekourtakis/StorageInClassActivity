@@ -2,6 +2,7 @@ package com.example.networkapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,8 +15,12 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.FileReader
 
-// TODO (1: Fix any bugs)
 // TODO (2: Add function saveComic(...) to save comic info when downloaded
 // TODO (3: Automatically load previously saved comic when app starts)
 
@@ -27,10 +32,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var numberEditText: EditText
     lateinit var showButton: Button
     lateinit var comicImageView: ImageView
+    private lateinit var file: File
+    private val saveFile = "lastComic"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        file = File(filesDir, saveFile)
 
         requestQueue = Volley.newRequestQueue(this)
 
@@ -44,6 +52,13 @@ class MainActivity : AppCompatActivity() {
             downloadComic(numberEditText.text.toString())
         }
 
+        if (file.exists()) {
+            Log.d("file test", "exists")
+            val fileText = FileInputStream(file).bufferedReader().use { it.readText() }
+            showComic(JSONObject(fileText))
+        } else {
+            Log.d("file test", "does not exist")
+        }
     }
 
     // Fetches comic from web as JSONObject
@@ -62,12 +77,12 @@ class MainActivity : AppCompatActivity() {
         titleTextView.text = comicObject.getString("title")
         descriptionTextView.text = comicObject.getString("alt")
         Picasso.get().load(comicObject.getString("img")).into(comicImageView)
+
+        saveComic(comicObject)
     }
 
     // Implement this function
     private fun saveComic(comicObject: JSONObject) {
-
+        FileOutputStream(file).write(comicObject.toString().toByteArray())
     }
-
-
 }
