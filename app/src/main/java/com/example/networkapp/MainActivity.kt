@@ -16,9 +16,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-// TODO (2: Add function saveComic(...) to save comic info when downloaded
-// TODO (3: Automatically load previously saved comic when app starts)
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var requestQueue: RequestQueue
@@ -28,12 +25,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var showButton: Button
     lateinit var comicImageView: ImageView
     private lateinit var file: File
-    private val saveFile = "lastComic"
+    private val saveFileName = "lastComic"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        file = File(filesDir, saveFile)
+        file = File(filesDir, saveFileName)
 
         requestQueue = Volley.newRequestQueue(this)
 
